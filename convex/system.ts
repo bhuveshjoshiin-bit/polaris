@@ -33,7 +33,6 @@ export const createMessage = mutation({
     projectId: v.id("projects"),
     role: v.union(v.literal("user"), v.literal("assistant")),
     content: v.string(),
-    model: v.optional(v.string()),
     status: v.optional(
       v.union(
         v.literal("processing"),
@@ -50,7 +49,6 @@ export const createMessage = mutation({
       projectId: args.projectId,
       role: args.role,
       content: args.content,
-      model: args.model,
       status: args.status,
     });
 

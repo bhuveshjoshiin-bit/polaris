@@ -2,10 +2,9 @@ import { z } from "zod";
 import { generateText, Output } from "ai";
 import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { anthropic } from "@ai-sdk/anthropic";
 
 import { firecrawl } from "@/lib/firecrawl";
-import { nimModel } from "@/lib/nim-provider";
-import { DEFAULT_MODEL_ID } from "@/lib/models";
 
 const quickEditSchema = z.object({
   editedCode: z
@@ -103,7 +102,7 @@ export async function POST(request: Request) {
       .replace("{documentation}", documentationContext);
 
     const { output } = await generateText({
-      model: nimModel(DEFAULT_MODEL_ID),
+      model: anthropic("claude-3-7-sonnet-20250219"),
       output: Output.object({ schema: quickEditSchema }),
       prompt,
     });

@@ -1,16 +1,15 @@
-import { createAgent, openai, createNetwork } from '@inngest/agent-kit';
+import { createAgent, anthropic, createNetwork } from '@inngest/agent-kit';
 
 import { inngest } from "@/inngest/client";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { NonRetriableError } from "inngest";
 import { convex } from "@/lib/convex-client";
 import { api } from "../../../../convex/_generated/api";
-import {
-  CODING_AGENT_SYSTEM_PROMPT,
+import { 
+  CODING_AGENT_SYSTEM_PROMPT, 
   TITLE_GENERATOR_SYSTEM_PROMPT
 } from "./constants";
 import { DEFAULT_CONVERSATION_TITLE } from "../constants";
-import { DEFAULT_MODEL_ID, NIM_BASE_URL } from "@/lib/models";
 import { createReadFilesTool } from './tools/read-files';
 import { createListFilesTool } from './tools/list-files';
 import { createUpdateFileTool } from './tools/update-file';
@@ -25,7 +24,6 @@ interface MessageEvent {
   conversationId: Id<"conversations">;
   projectId: Id<"projects">;
   message: string;
-  model?: string;
 };
 
 export const processMessage = inngest.createFunction(
@@ -58,12 +56,11 @@ export const processMessage = inngest.createFunction(
     event: "message/sent",
   },
   async ({ event, step }) => {
-    const {
-      messageId,
+    const { 
+      messageId, 
       conversationId,
       projectId,
-      message,
-      model
+      message
     } = event.data as MessageEvent;
 
     const internalKey = process.env.POLARIS_CONVEX_INTERNAL_KEY; 
@@ -120,10 +117,8 @@ export const processMessage = inngest.createFunction(
        const titleAgent = createAgent({
         name: "title-generator",
         system: TITLE_GENERATOR_SYSTEM_PROMPT,
-        model: openai({
-          model: "meta/llama-3.3-70b-instruct",
-          baseUrl: NIM_BASE_URL,
-          apiKey: process.env.NVIDIA_NIM_API_KEY,
+        model: anthropic({
+          model: "claude-3-5-haiku-20241022",
           defaultParameters: { temperature: 0, max_tokens: 50 },
         }),
        });
@@ -160,10 +155,8 @@ export const processMessage = inngest.createFunction(
       name: "polaris",
       description: "An expert AI coding assistant",
       system: systemPrompt,
-       model: openai({
-        model: model ?? DEFAULT_MODEL_ID,
-        baseUrl: NIM_BASE_URL,
-        apiKey: process.env.NVIDIA_NIM_API_KEY,
+       model: anthropic({
+        model: "claude-opus-4-20250514",
         defaultParameters: { temperature: 0.3, max_tokens: 16000 }
        }),
        tools: [
@@ -192,7 +185,7 @@ export const processMessage = inngest.createFunction(
           (m) => m.type === "tool_call"
         );
 
-        // Some models output text AND tool calls together
+        // Anthropic outputs text AND tool calls together
         // Only stop if there's text WITHOUT tool calls (final response)
         if (hasTextResponse && !hasToolCalls) {
           return undefined;

@@ -11,7 +11,6 @@ import { Id } from "../../../../convex/_generated/dataModel";
 const requestSchema = z.object({
   conversationId: z.string(),
   message: z.string(),
-  model: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -31,7 +30,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { conversationId, message, model } = requestSchema.parse(body);
+  const { conversationId, message } = requestSchema.parse(body);
 
   // Call convex mutation, query
   const conversation = await convex.query(api.system.getConversationById, {
@@ -84,7 +83,6 @@ export async function POST(request: Request) {
     projectId,
     role: "user",
     content: message,
-    model,
   });
 
   // Create assistant message placeholder with processing status
@@ -96,7 +94,6 @@ export async function POST(request: Request) {
       projectId,
       role: "assistant",
       content: "",
-      model,
       status: "processing",
     }
   );
@@ -109,7 +106,6 @@ export async function POST(request: Request) {
       conversationId,
       projectId,
       message,
-      model,
     },
   });
 

@@ -1,10 +1,10 @@
 import ky from "ky";
 import { toast } from "sonner";
 import { useState } from "react";
-import {
-  CopyIcon,
-  HistoryIcon,
-  LoaderIcon,
+import { 
+  CopyIcon, 
+  HistoryIcon, 
+  LoaderIcon, 
   PlusIcon
 } from "lucide-react";
 
@@ -24,11 +24,6 @@ import {
   PromptInput,
   PromptInputBody,
   PromptInputFooter,
-  PromptInputSelect,
-  PromptInputSelectContent,
-  PromptInputSelectItem,
-  PromptInputSelectTrigger,
-  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -46,7 +41,6 @@ import {
 import { Id } from "../../../../convex/_generated/dataModel";
 import { DEFAULT_CONVERSATION_TITLE } from "../constants";
 import { PastConversationsDialog } from "./past-conversations-dialog";
-import { NIM_MODELS, DEFAULT_MODEL_ID } from "@/lib/models";
 
 interface ConversationSidebarProps {
   projectId: Id<"projects">;
@@ -56,7 +50,6 @@ export const ConversationSidebar = ({
   projectId,
 }: ConversationSidebarProps) => {
   const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
   const [
     selectedConversationId,
     setSelectedConversationId,
@@ -127,7 +120,6 @@ export const ConversationSidebar = ({
         json: {
           conversationId,
           message: message.text,
-          model: selectedModel,
         },
       });
     } catch {
@@ -222,26 +214,7 @@ export const ConversationSidebar = ({
               />
             </PromptInputBody>
             <PromptInputFooter>
-              <PromptInputTools>
-                <PromptInputSelect
-                  value={selectedModel}
-                  onValueChange={setSelectedModel}
-                >
-                  <PromptInputSelectTrigger>
-                    <PromptInputSelectValue placeholder="Select model" />
-                  </PromptInputSelectTrigger>
-                  <PromptInputSelectContent>
-                    {NIM_MODELS.map((model) => (
-                      <PromptInputSelectItem
-                        key={model.id}
-                        value={model.id}
-                      >
-                        {model.name}
-                      </PromptInputSelectItem>
-                    ))}
-                  </PromptInputSelectContent>
-                </PromptInputSelect>
-              </PromptInputTools>
+              <PromptInputTools />
               <PromptInputSubmit
                 disabled={isProcessing ? false : !input}
                 status={isProcessing ? "streaming" : undefined}

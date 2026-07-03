@@ -2,9 +2,8 @@ import { generateText, Output } from "ai";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-
-import { nimModel } from "@/lib/nim-provider";
-import { DEFAULT_MODEL_ID } from "@/lib/models";
+import { anthropic } from "@ai-sdk/anthropic";
+// import { google } from "@ai-sdk/google";
 
 const suggestionSchema = z.object({
   suggestion: z
@@ -84,7 +83,7 @@ export async function POST(request: Request) {
       .replace("{lineNumber}", lineNumber.toString());
 
     const { output } = await generateText({
-      model: nimModel(DEFAULT_MODEL_ID),
+      model: anthropic("claude-3-7-sonnet-20250219"),
       output: Output.object({ schema: suggestionSchema }),
       prompt,
     });

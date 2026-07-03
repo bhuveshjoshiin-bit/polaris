@@ -17,11 +17,6 @@ import {
   PromptInput,
   PromptInputBody,
   PromptInputFooter,
-  PromptInputSelect,
-  PromptInputSelectContent,
-  PromptInputSelectItem,
-  PromptInputSelectTrigger,
-  PromptInputSelectValue,
   PromptInputSubmit,
   PromptInputTextarea,
   PromptInputTools,
@@ -29,7 +24,6 @@ import {
 } from "@/components/ai-elements/prompt-input";
 
 import { Id } from "../../../../convex/_generated/dataModel";
-import { NIM_MODELS, DEFAULT_MODEL_ID } from "@/lib/models";
 
 interface NewProjectDialogProps {
   open: boolean;
@@ -42,7 +36,6 @@ export const NewProjectDialog = ({
 }: NewProjectDialogProps) => {
   const router = useRouter();
   const [input, setInput] = useState("");
-  const [selectedModel, setSelectedModel] = useState(DEFAULT_MODEL_ID);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (message: PromptInputMessage) => {
@@ -53,7 +46,7 @@ export const NewProjectDialog = ({
     try {
       const { projectId } = await ky
         .post("/api/projects/create-with-prompt", {
-          json: { prompt: message.text.trim(), model: selectedModel },
+          json: { prompt: message.text.trim() },
         })
         .json<{ projectId: Id<"projects"> }>();
 
@@ -90,26 +83,7 @@ export const NewProjectDialog = ({
             />
           </PromptInputBody>
           <PromptInputFooter>
-             <PromptInputTools>
-               <PromptInputSelect
-                 value={selectedModel}
-                 onValueChange={setSelectedModel}
-               >
-                 <PromptInputSelectTrigger>
-                   <PromptInputSelectValue placeholder="Select model" />
-                 </PromptInputSelectTrigger>
-                 <PromptInputSelectContent>
-                   {NIM_MODELS.map((model) => (
-                     <PromptInputSelectItem
-                       key={model.id}
-                       value={model.id}
-                     >
-                       {model.name}
-                     </PromptInputSelectItem>
-                   ))}
-                 </PromptInputSelectContent>
-               </PromptInputSelect>
-             </PromptInputTools>
+             <PromptInputTools />
              <PromptInputSubmit disabled={!input || isSubmitting} />
           </PromptInputFooter>
         </PromptInput>
