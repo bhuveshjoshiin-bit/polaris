@@ -17,6 +17,7 @@ import { api } from "../../../../../convex/_generated/api";
 
 const requestSchema = z.object({
   prompt: z.string().min(1),
+  model: z.string().optional(),
 });
 
 export async function POST(request: Request) {
@@ -36,7 +37,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { prompt } = requestSchema.parse(body);
+  const { prompt, model } = requestSchema.parse(body);
 
   // Generate a random project name
   const projectName = uniqueNamesGenerator({
@@ -63,6 +64,7 @@ export async function POST(request: Request) {
     projectId,
     role: "user",
     content: prompt,
+    model,
   });
 
   // Create assistant message placeholder with processing status
@@ -74,6 +76,7 @@ export async function POST(request: Request) {
       projectId,
       role: "assistant",
       content: "",
+      model,
       status: "processing",
     },
   );
@@ -86,6 +89,7 @@ export async function POST(request: Request) {
       conversationId,
       projectId,
       message: prompt,
+      model,
     },
   });
 

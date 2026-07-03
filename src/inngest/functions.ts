@@ -1,6 +1,7 @@
 import { generateText } from "ai";
 import { inngest } from "./client";
-import { anthropic } from "@ai-sdk/anthropic";
+import { nimModel } from "@/lib/nim-provider";
+import { DEFAULT_MODEL_ID } from "@/lib/models";
 import { firecrawl } from "@/lib/firecrawl";
 
 const URL_REGEX = /https?:\/\/[^\s]+/g;
@@ -34,7 +35,7 @@ export const demoGenerate = inngest.createFunction(
 
     await step.run("generate-text", async () => {
       return await generateText({
-        model: anthropic('claude-3-haiku-20240307'),
+        model: nimModel(DEFAULT_MODEL_ID),
         prompt: finalPrompt,
         experimental_telemetry: {
           isEnabled: true,
